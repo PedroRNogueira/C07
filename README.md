@@ -1,4 +1,4 @@
-##Este projeto implementa um **banco de dados relacional** para um **jogo RPG**.
+## Este projeto implementa um **banco de dados relacional** para um **jogo RPG**.
 
 ---
 
