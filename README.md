@@ -1,4 +1,4 @@
-Este projeto implementa um **banco de dados relacional** para um **jogo RPG**.
+##Este projeto implementa um **banco de dados relacional** para um **jogo RPG**.
 
 ---
 
@@ -32,6 +32,6 @@ Este projeto implementa um **banco de dados relacional** para um **jogo RPG**.
 | **Jogador**  | **Personagem** | **1:N** | Um jogador pode ter **vários personagens**. |
 | **Personagem** | **Inventario** | **1:1** | Cada personagem possui **apenas um inventário**. |
 | **Inventario** | **Item** | **N:N** | Um inventário pode conter **vários itens** e um item pode estar em **vários inventários**. |
-| **Personagem** | **Missao** | **N:N** | Um personagem pode fazer **várias missões** e cada missão pode ser feita por **vários personagens**. |
+| **Personagem** | **Missao** | **1:N** | Um personagem pode fazer **uma missão** e cada missão pode ser feita por **vários personagens**. |
 
 ---
