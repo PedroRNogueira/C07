@@ -1,135 +1,284 @@
-# 🧙‍♂️ Banco de Dados — Jogo RPG (Segunda Entrega)
 
-## ⚠️ Importante — Usuário de Exemplo
+# 📘 README — Jogo RPG Console + Banco de Dados (CRUD + JOINs)
 
-Neste projeto, foi criado um **usuário SQL fictício** apenas **para demonstração acadêmica** do controle de permissões em um banco de dados.  
-O usuário `'jogador'@'localhost'` é um **exemplo didático** exigido pelos critérios da entrega, com permissões básicas (`SELECT, INSERT, UPDATE, DELETE`).  
+Bem-vindo ao projeto **Jogo RPG Console + Sistema de Banco de Dados**!  
+Este documento explica **como jogar**, **como usar o menu do banco de dados**, **como funciona cada componente**, além da **estrutura completa do projeto**.
 
-> 💡 Como o projeto foi desenvolvido individualmente, **todas as operações reais** foram realizadas utilizando a **conta administrativa padrão do MySQL**.  
-> A presença do usuário `jogador` serve **somente para comprovar o conhecimento sobre gerenciamento de acessos** no contexto da disciplina.
+---
 
-Exemplo de criação do usuário:
-```sql
-CREATE USER IF NOT EXISTS 'jogador'@'localhost' IDENTIFIED BY '1234';
-GRANT SELECT, INSERT, UPDATE, DELETE ON jogo_rpg.* TO 'jogador'@'localhost';
-FLUSH PRIVILEGES;
+# 📌 1. Sobre o Projeto
+
+Este é um jogo RPG simples em Java que integra:
+
+✔ Mapa com movimentação  
+✔ Sistema de batalhas  
+✔ Inventário persistente  
+✔ Missões progressivas (1 a 5)  
+✔ Sistema de SAVE automático  
+✔ Banco de Dados com CRUD completo  
+✔ JOINs mostram inventário + missões do jogador  
+✔ Menu do jogo + Menu Administrativo feito com SELECT, UPDATE, INSERT e DELETE  
+
+O objetivo é **explorar mapas, enfrentar inimigos e concluir as 5 missões**.
+
+---
+
+# 🎮 2. Como Jogar
+
+Quando você inicia o jogo (opção 1 no menu principal), ocorre:
+
+### 1️⃣ Criar Jogador
+Você informa um nome, e o sistema cria:
+- Vida inicial: 100
+- Ataque inicial: 10
+- Missão inicial: 1
+- Mapa inicial: 1
+
+### 2️⃣ Entrar no mapa
+O jogador aparece no centro do mapa, representado por:
+
+```
+X  (você)
+.  (chão)
+```
+
+### 3️⃣ Controles
+
+| Tecla | Ação |
+|------|------|
+| **W** | mover para cima |
+| **S** | mover para baixo |
+| **A** | mover para esquerda |
+| **D** | mover para direita |
+| **I** | abrir inventário |
+| **Q** | sair do jogo e voltar ao menu |
+
+---
+
+# 🗺️ 3. Mapas e Missões
+
+O jogo possui **5 mapas** (Mapa 1 até Mapa 5).  
+Cada mapa corresponde a **uma missão**:
+
+| Mapa | Missão |
+|------|--------|
+| 1 | Sair do mapa 1 |
+| 2 | Sair do mapa 2 |
+| 3 | Sair do mapa 3 |
+| 4 | Sair do mapa 4 |
+| 5 | Sair do mapa 5 (final) |
+
+### ✔ Ao sair do mapa:
+- Missão atual é concluída no banco
+- Avança para a próxima missão
+- Avança para o próximo mapa
+- SAVE automático:
+  - mapa_atual
+  - missao_atual
+  - vida
+  - inventário
+- Se concluir todas, apresenta mensagem de parabéns 🎉
+
+---
+
+# ⚔️ 4. Batalhas
+
+Ao andar no mapa existe chance de:
+
+| Chance | Evento |
+|--------|--------|
+| 40% | Encontrar poção |
+| 40% | Batalha contra Goblin |
+| 20% | Nada acontece |
+
+Batalhas são **em turnos**:
+- Jogador ataca
+- Inimigo ataca
+- Continua até alguém morrer
+
+Morrer retorna ao menu principal.
+
+---
+
+# 🎒 5. Inventário
+
+Cada jogador tem **limite de 5 itens**.
+
+Itens são salvos no BD via tabela `inventario`.
+
+Tipos de itens:
+
+1. **Poção de Cura**
+2. **Item desconhecido (adicionado pelo menu BD)**
+
+### ✔ Ao usar um item:
+- Se for poção → cura 30 de vida  
+- Se for item desconhecido → mensagem:  
+  `"Eu não sei o que isso faz..."`  
+  E o item é descartado.
+
+---
+
+# 🗄️ 6. Menu do Banco de Dados (CRUD Completo)
+
+A opção **3 - Menu do Banco de Dados** abre um painel administrativo com:
+
+---
+
+## 🔹 **1 — CRUD JOGADOR**
+- Inserir jogador (gera missões automaticamente)
+- Atualizar jogador
+- Deletar jogador
+- Listar jogadores
+
+Jogador possui:
+- id  
+- nome  
+- vida  
+- ataque  
+- mapa_atual  
+- missao_atual  
+
+---
+
+## 🔹 **2 — CRUD ITENS**
+- Inserir item  
+- Listar itens  
+- Atualizar item  
+- Deletar item  
+  (também apaga vínculos com inventário)
+
+---
+
+## 🔹 **3 — CRUD INVENTÁRIO**
+Permite:
+
+- Adicionar item ao jogador
+- Listar itens do jogador
+- Atualizar item (trocar itemA → itemB)
+- Remover item do inventário
+
+---
+
+## 🔹 **4 — CRUD MISSÕES**
+Permite:
+
+- Inserir missão  
+- Listar missões  
+- Atualizar missão  
+- Deletar missão  
+
+---
+
+## 🔹 **5 — JOINS Completos**
+### Joins mostram:
+
+### ✔ (17) Jogadores + MISSÃO ATUAL
+Usa subconsulta para encontrar **próxima missão não concluída**.
+
+### ✔ (18) Inventário + Missões do Jogador
+Mostra:
+
+- Itens (JOIN inventario + itens)
+- Missões com status (JOIN missao + missao_jogador)
+
+### ✔ (19–21) CRUD Completo via JOIN
+Permite:
+- Criar jogador com ID escolhido
+- Atualizar jogador completo
+- Deletar jogador completo
+
+---
+
+# 🧱 7. Estrutura do Banco de Dados
+
+Tabelas:
+
+- jogador  
+- itens  
+- inventario  
+- missao  
+- missao_jogador  
+
+Inclui:
+
+- Foreign Keys  
+- ON DELETE CASCADE  
+- Controle completo de missões  
+
+---
+
+# 🧩 8. Estrutura do Projeto
+
+```
+src/
+ ├─ app/
+ │   ├─ Main.java
+ │   ├─ MenuRPG.java
+ │   ├─ Game.java
+ │   ├─ MainHelper.java
+ │   └─ Relogio.java
+ ├─ dao/
+ │   ├─ JogadorDAO.java
+ │   ├─ ItemDAO.java
+ │   ├─ InventarioDAO.java
+ │   ├─ MissaoDAO.java
+ │   └─ MissaoJogadorDAO.java
+ ├─ Mundo/
+ │   └─ Mapas.java
+ ├─ Missoes/
+ │   ├─ Missao.java
+ │   ├─ GerenciadorMissoes.java
+ ├─ Entidades/
+ │   ├─ Jogador.java
+ │   ├─ Inimigo.java
+ │   └─ Personagens.java
+ ├─ Itens/
+ │   ├─ Cura.java
+ │   ├─ ItemDesconhecido.java
+ │   └─ Inventario.java
 ```
 
 ---
 
-## 🧩 Descrição Geral
+# ▶️ 9. Como Rodar o Jogo
 
-Este projeto implementa o **banco de dados do jogo RPG por turnos**, conectando-se ao código Java desenvolvido anteriormente.  
-Foi desenvolvido para a **segunda entrega prática da disciplina**, contendo:
+Requisitos:
+- Java 17+  
+- MySQL 8+  
+- IntelliJ, Eclipse ou NetBeans  
 
-- Estrutura completa de tabelas e relacionamentos  
-- Inserções com dados representativos (poucos nulos)  
-- Atualizações e exclusões controladas  
-- Uma função, uma view e uma trigger  
-- Um usuário de exemplo com permissões limitadas  
+### 💾 Criar Banco:
+Execute o SQL:
 
----
+```
+DROP DATABASE IF EXISTS rpg_game2;
+CREATE DATABASE rpg_game2;
+USE rpg_game2;
+-- (restante do script incluído no projeto)
+```
 
-## 🧱 Estrutura do Banco de Dados
+Configure a conexão em `DB.java`.
 
-| Tabela | Descrição |
-|---------|------------|
-| **personagem** | Armazena informações dos personagens jogáveis (nome, vida, ataque, mana, nível e experiência). |
-| **inimigo** | Contém inimigos do jogo, com atributos e experiência concedida ao serem derrotados. |
-| **item** | Define todos os itens do jogo (nome, tipo, efeito e valor). |
-| **loot** | Relaciona inimigos aos itens que podem dropar, com uma chance percentual. |
-| **inventario** | Representa os itens pertencentes a cada personagem. |
-| **mapa** | Estrutura as posições do mundo do jogo (coordenadas, inimigos, itens, saídas, etc.). |
+### ▶️ Rodar:
+Abra o arquivo:
 
----
+```
+app/Main.java
+```
 
-## 🔗 Relacionamentos
-
-| Entidade A | Entidade B | Tipo | Descrição |
-|-------------|-------------|------|------------|
-| **personagem** | **inventario** | 1:N | Cada personagem pode possuir vários itens. |
-| **item** | **inventario** | 1:N | Um mesmo item pode estar em vários inventários. |
-| **inimigo** | **loot** | 1:N | Um inimigo pode dropar vários itens. |
-| **item** | **loot** | 1:N | Um item pode ser dropado por diversos inimigos. |
-| **mapa** | **inimigo/item** | N:1 | Cada posição pode conter um inimigo, item ou estar vazia. |
+E clique **Run**.
 
 ---
 
-## 🧠 Estruturas Implementadas
+# 💬 10. Suporte
 
-| Tipo | Nome | Finalidade |
-|------|------|------------|
-| **VIEW** | `vw_personagem_status` | Exibe o progresso percentual de XP até o próximo nível. |
-| **FUNCTION** | `xp_necessaria(nivel_atual)` | Calcula a experiência necessária para subir de nível. |
-| **TRIGGER** | `trigger_subir_nivel` | Atualiza automaticamente os atributos ao alcançar XP suficiente. |
+Se você tiver:
+- erros no banco  
+- dúvidas no JOIN  
+- bugs no mapa ou missão  
 
----
+basta perguntar que continuo o suporte.
 
-## 🔄 Atualizações e Alterações
+Bom jogo! 🎮🔥
 
-As seguintes operações foram aplicadas como parte das **alterações controladas** da entrega:
-
-| Tipo | Operação | Descrição |
-|------|-----------|------------|
-| **UPDATE** | `UPDATE personagem SET experiencia = experiencia + 50;` | Simula ganho de XP após batalha. |
-| **DELETE** | `DELETE FROM item WHERE tipo = 'outro';` | Remove itens obsoletos sem função ativa. |
-| **ALTER** | `ALTER TABLE personagem ADD COLUMN mana INT DEFAULT 100;` | Adiciona o atributo “mana” à tabela principal. |
-| **DROP** | `DROP TABLE IF EXISTS loot;` | Remoção da estrutura antiga para recriação com integridade referencial. |
-
-Essas ações representam o **processo de manutenção natural** de um banco de dados em evolução, refletindo ajustes de gameplay e balanceamento.
-
----
-
-## 🗺️ Estrutura do Mapa — Exemplo Prático
-
-| Linha | Coluna | Tipo | Conteúdo |
-|--------|---------|------|-----------|
-| 1 | 1 | item | Poção de Cura |
-| 1 | 2 | inimigo | Goblin |
-| 1 | 3 | item | Espada Curta |
-| 1 | 4 | inimigo | Lobo Selvagem |
-| 1 | 5 | saída | Fim do mapa |
-| 2 | 1 | inimigo | Esqueleto |
-| 2 | 2 | item | Escudo Pequeno |
-| 2 | 3 | vazio | - |
-| 2 | 4 | inimigo | Orc |
-| 2 | 5 | item | Poção de Mana |
-
----
-
-## ✅ Requisitos da Entrega — Verificação
-
-| Critério | Cumprimento |
-|-----------|-------------|
-| Criação de tabelas com relacionamentos | ✅ |
-| Inserções representativas (mínimo de 3 por tabela) | ✅ |
-| 2 atualizações ou exclusões | ✅ |
-| 1 ALTER e 1 DROP | ✅ |
-| Criação de 1 usuário SQL com privilégios | ✅ *(usuário exemplo)* |
-| 3 estruturas (Function, View, Trigger) | ✅ |
-
----
-
-## 🧾 Observações Finais
-
-- O banco pode ser recriado sem erros, utilizando comandos com `IF EXISTS` e `IF NOT EXISTS`.  
-- Todos os relacionamentos seguem **integridade referencial** com chaves estrangeiras e cascatas adequadas.  
-- O sistema foi projetado para ser compatível com o código Java do jogo RPG em turnos.  
-- O usuário `'jogador'@'localhost'` **não é utilizado na prática**, mas **foi incluído unicamente para atender à exigência do controle de acessos** na entrega.  
-
----
-
-## 📂 Arquivos do Projeto
-
-| Arquivo | Descrição |
-|----------|------------|
-| `banco_rpg.sql` | Script completo com tabelas, inserções, updates, triggers, view e function. |
-| `banco_rpg.mwb` | Modelo visual criado no MySQL Workbench. |
-| `README.md` | Documentação explicativa e resumo da entrega. |
-
----
-
-**Autor:** Pedro Ribeiro Nogueira  
-**Curso:** Engenharia de Software — INATEL  
-**Período:** 5º  
-**Entrega:** Segunda Etapa — Banco de Dados (Jogo RPG)
