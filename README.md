@@ -270,15 +270,3 @@ app/Main.java
 E clique **Run**.
 
 ---
-
-# 💬 10. Suporte
-
-Se você tiver:
-- erros no banco  
-- dúvidas no JOIN  
-- bugs no mapa ou missão  
-
-basta perguntar que continuo o suporte.
-
-Bom jogo! 🎮🔥
-
